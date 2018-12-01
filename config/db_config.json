@@ -1,0 +1,9 @@
+{
+    "development": {
+        "user": "root",
+        "password": "admin",
+        "database": "pdiscos",
+        "host": "127.0.0.1",
+        "dialect":"mysql"
+    }
+}
