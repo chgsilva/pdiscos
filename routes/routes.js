@@ -11,5 +11,10 @@ module.exports = function(app) {
     app.put(PREFIX + '/album', app.controllers.catalogoController.editAlbum);
     app.delete(PREFIX + '/album', app.controllers.catalogoController.deteleAlbum);
 
+    app.get(PREFIX + '/collections', app.controllers.catalogoController.getCollections);
+    app.post(PREFIX + '/collection', app.controllers.catalogoController.addCollection);
+    app.put(PREFIX + '/collection', app.controllers.catalogoController.editCollection);
+    app.delete(PREFIX + '/collection', app.controllers.catalogoController.deteleCollection);
+
 
 }

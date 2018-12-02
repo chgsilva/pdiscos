@@ -54,7 +54,13 @@ module.exports = function(app) {
                     } else {
                         res.send("error")
                     }
-                }).catch((err) => setImmediate(() => { throw err; }));
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR') {
+                        res.send("invalid id")
+                    } else{
+                        throw err;
+                    }
+                }));
             } else {
                 missing_params = []
                 req.body.id_artist == undefined && missing_params.push("id_artist")
@@ -108,12 +114,12 @@ module.exports = function(app) {
                         res.send("error")
                     }
                 }).catch((err) => setImmediate(() => {
-                    console.log(err)
-                    if (err.code == 'ER_NO_REFERENCED_ROW_2') {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR') {
                         res.send("invalid id")
                     } else{
                         throw err;
-                    }                }));
+                    }
+                }));
             } else {
                 missing_params = []
                 req.body.id_artist == undefined && missing_params.push("id_artist")
@@ -142,6 +148,79 @@ module.exports = function(app) {
                 res.send(
                     {
                         "missing_params":"id_album"
+                    }
+                )
+            }
+        },
+
+        getCollections: function(req, res) {
+            dbService.getCollections().then(function(collections){
+                res.send(collections);
+            }).catch((err) => setImmediate(() => { throw err; }));
+        },
+
+        addCollection: function(req, res) {
+            if (req.body.new_collection_name != undefined && req.body.new_collection_descricao != undefined) {
+                dbService.addCollection(req.body.new_collection_name, req.body.new_collection_descricao).then(function(id_collection){
+                    res.send({"id_collection":id_collection})
+                }).catch((err) => setImmediate(() => {
+                    throw err;
+                }));
+            } else {
+                missing_params = []
+                req.body.new_collection_name == undefined && missing_params.push("new_collection_name")
+                req.body.new_collection_descricao == undefined && missing_params.push("new_collection_descricao")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
+
+        editCollection: function(req, res) {
+            if (req.body.new_collection_name != undefined && req.body.new_collection_descricao != undefined && req.body.id_collection != undefined) {
+                dbService.editCollection(req.body.new_collection_name, req.body.new_collection_descricao, req.body.id_collection).then(function(affectedRows){
+                    if (affectedRows == 1) {
+                        res.send("collection successfully edited")
+                    } else {
+                        res.send("error")
+                    }
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
+                        res.send("invalid id")
+                    } else{
+                        throw err;
+                    }
+                }));
+            } else {
+                missing_params = []
+                req.body.new_collection_name == undefined && missing_params.push("new_collection_name")
+                req.body.new_collection_descricao == undefined && missing_params.push("new_collection_descricao")
+                req.body.id_collection == undefined && missing_params.push("id_collection")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
+
+        deteleCollection: function(req, res) {
+            if (req.body.id_collection != undefined) {
+                dbService.deteleCollection(req.body.id_collection).then(function(affectedRows){
+                    if (affectedRows == 1) {
+                        res.send("success")
+                    } else {
+                        res.send("error")
+                    }
+                }).catch((err) => setImmediate(() => { throw err; }));
+            } else {
+                res.send(
+                    {
+                        "missing_params":"id_collection"
                     }
                 )
             }

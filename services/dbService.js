@@ -122,4 +122,57 @@ module.exports = {
             });
         });
     },
+
+    getCollections: function(){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "select * from Collection", function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows)
+            });
+        });
+    },
+
+    addCollection: function(new_collection_name, new_collection_descricao) {
+        return new Promise(function(resolve, reject) {
+            connection.query("INSERT INTO Collection(nome, descricao) VALUES ('" + new_collection_name + "', '" + new_collection_descricao + "')", function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows.insertId);
+            });
+        });
+    },
+
+    editCollection: function(new_collection_name, new_collection_descricao, id_collection) {
+        return new Promise(function(resolve, reject) {
+            connection.query(
+                "UPDATE Collection " +
+                "SET nome='" + new_collection_name + "' , " +
+                "descricao='" + new_collection_descricao + "' " +
+                "WHERE id_collection=" + id_collection ,
+                function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows.affectedRows);
+            });
+        });
+    },
+
+    deteleCollection: function(id_collection) {
+        return new Promise(function(resolve, reject) {
+            connection.query(
+                "DELETE FROM Collection "+
+                "WHERE id_collection='" + id_collection + "'"
+                , function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows.affectedRows);
+            });
+        });
+    },
 };
