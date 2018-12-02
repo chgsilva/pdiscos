@@ -17,10 +17,10 @@ module.exports = {
     getAlbums: function(){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT D.*, A.Nome as artista " +
-                "FROM Disco AS D " +
-                "JOIN Artista AS A " +
-                "ON A.id_artista=D.id_artista", function (err, rows, fields) {
+                "SELECT D.*, A.name_artist as name_artist " +
+                "FROM Album AS AB " +
+                "JOIN Artist AS A " +
+                "ON A.id_artist=AB.id_artist", function (err, rows, fields) {
                 if (err) {
                     return reject(err);
                 }
@@ -46,7 +46,7 @@ module.exports = {
     addAlbum: function(new_album_name, new_album_year, id_artist) {
         return new Promise(function(resolve, reject) {
             connection.query(
-                "INSERT INTO Album(album_name, album_year, id_artista) " +
+                "INSERT INTO Album(album_name, album_year, id_artist) " +
                 "Values ('" + new_album_name + "', " + new_album_year + ", " + id_artist + ")",
                 function (err, rows, fields) {
                 if (err) {
@@ -75,7 +75,7 @@ module.exports = {
     getArtists: function(){
         return new Promise(function(resolve, reject){
             connection.query(
-                "select A.Nome as artista, A.ID as id_artista from Artista AS A", function (err, rows, fields) {
+                "select * from Artist AS A", function (err, rows, fields) {
                 if (err) {
                     return reject(err);
                 }
@@ -84,9 +84,9 @@ module.exports = {
         });
     },
 
-    addArtist: function(name_artista) {
+    addArtist: function(name_artist) {
         return new Promise(function(resolve, reject) {
-            connection.query("insert into Artista(Nome) Values ('" + name_artista + "')", function (err, rows, fields) {
+            connection.query("insert into Artist(name_artist) Values ('" + name_artist + "')", function (err, rows, fields) {
                 if (err) {
                     return reject(err);
                 }
@@ -98,9 +98,9 @@ module.exports = {
     editArtist: function(artist_id, name_artist) {
         return new Promise(function(resolve, reject) {
             connection.query(
-                "UPDATE Artista " +
-                "SET nome=\"" + name_artist + "\" " +
-                "WHERE id_artista=" + artist_id ,
+                "UPDATE Artist " +
+                "SET name_artist=\"" + name_artist + "\" " +
+                "WHERE id_artist=" + artist_id ,
                 function (err, rows, fields) {
                 if (err) {
                     return reject(err);
@@ -113,8 +113,8 @@ module.exports = {
     deleteArtist: function(id_artist) {
         return new Promise(function(resolve, reject) {
             connection.query(
-                "DELETE FROM Artista "+
-                "WHERE id_artista='" + id_artist + "'"
+                "DELETE FROM Artist "+
+                "WHERE id_artist='" + id_artist + "'"
                 , function (err, rows, fields) {
                 if (err) {
                     return reject(err);
@@ -138,7 +138,7 @@ module.exports = {
 
     addCollection: function(new_collection_name, new_collection_descricao) {
         return new Promise(function(resolve, reject) {
-            connection.query("INSERT INTO Collection(nome, descricao) VALUES ('" + new_collection_name + "', '" + new_collection_descricao + "')", function (err, rows, fields) {
+            connection.query("INSERT INTO Collection(name_collection, summary_collection) VALUES ('" + new_collection_name + "', '" + new_collection_descricao + "')", function (err, rows, fields) {
                 if (err) {
                     return reject(err);
                 }
@@ -151,8 +151,8 @@ module.exports = {
         return new Promise(function(resolve, reject) {
             connection.query(
                 "UPDATE Collection " +
-                "SET nome='" + new_collection_name + "' , " +
-                "descricao='" + new_collection_descricao + "' " +
+                "SET name_collection='" + new_collection_name + "' , " +
+                "summary_collection='" + new_collection_descricao + "' " +
                 "WHERE id_collection=" + id_collection ,
                 function (err, rows, fields) {
                 if (err) {
@@ -207,10 +207,12 @@ module.exports = {
         return new Promise(function(resolve, reject){
             connection.query(
                 "SELECT * " +
-                "JOIN Album as A on A.id_album=AC.id_album " +
                 "FROM Album_Collection AS AC " +
+                "JOIN Album as AB on AB.id_album=AC.id_album " +
                 "JOIN Collection AS C "+
                 "ON C.id_collection=AC.id_collection " +
+                "JOIN Artist AS AT "+
+                "ON AT.id_artist=AB.id_artist " +
                 "WHERE ac.id_collection=" + id_collection
                 ,
                  function (err, rows, fields) {

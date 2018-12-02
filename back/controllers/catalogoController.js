@@ -1,15 +1,17 @@
 var dbService = require('../services/dbService')
 var bodyParser = require('body-parser');
+const cors = require('cors')
 
 module.exports = function(app) {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
+    app.use('*', cors())
 
     const controller = {
         getArtists: function(req, res) {
-            dbService.getArtists().then(function(artistas){
-                res.send(artistas);
+            dbService.getArtists().then(function(artists){
+                res.send(artists);
             }).catch((err) => setImmediate(() => { throw err; }));
         },
 
@@ -209,8 +211,8 @@ module.exports = function(app) {
         },
 
         deteleCollection: function(req, res) {
-            if (req.body.id_collection != undefined) {
-                dbService.deteleCollection(req.body.id_collection).then(function(affectedRows){
+            if (req.params.id_collection != undefined) {
+                dbService.deteleCollection(req.params.id_collection).then(function(affectedRows){
                     if (affectedRows == 1) {
                         res.send("success")
                     } else {
@@ -304,8 +306,8 @@ module.exports = function(app) {
         },
 
         albumsByCollection: function(req, res) {
-            if (req.body.id_collection != undefined) {
-                dbService.albumsByCollection(req.body.id_collection).then(function(albums){
+            if (req.params.id_collection != undefined) {
+                dbService.albumsByCollection(req.params.id_collection).then(function(albums){
                     res.send(albums)
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
@@ -316,7 +318,7 @@ module.exports = function(app) {
                 }));
             } else {
                 missing_params = []
-                req.body.id_collection == undefined && missing_params.push("id_collection")
+                req.params.id_collection == undefined && missing_params.push("id_collection")
 
                 res.send(
                     {
