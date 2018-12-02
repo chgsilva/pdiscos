@@ -19,7 +19,8 @@ module.exports = {
             connection.query(
                 "SELECT D.*, A.Nome as artista " +
                 "FROM Disco AS D " +
-                "JOIN Artista AS A ON A.id_artista=D.id_artista", function (err, rows, fields) {
+                "JOIN Artista AS A " +
+                "ON A.id_artista=D.id_artista", function (err, rows, fields) {
                 if (err) {
                     return reject(err);
                 }
@@ -201,4 +202,39 @@ module.exports = {
             });
         });
     },
+
+    albumsByCollection: function(id_collection) {
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * " +
+                "JOIN Album as A on A.id_album=AC.id_album " +
+                "FROM Album_Collection AS AC " +
+                "JOIN Collection AS C "+
+                "ON C.id_collection=AC.id_collection " +
+                "WHERE ac.id_collection=" + id_collection
+                ,
+                 function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows)
+            });
+        });
+    },
+
+    albumsByArtist: function(id_artist) {
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * " +
+                "FROM Album as A " +
+                "WHERE A.id_artist=" + id_artist
+                ,
+                 function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows)
+            });
+        });
+    }
 };

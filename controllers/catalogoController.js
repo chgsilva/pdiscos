@@ -279,6 +279,54 @@ module.exports = function(app) {
                 )
             }
         },
+
+        albumsByArtist: function(req, res) {
+            if (req.body.id_artist != undefined) {
+                dbService.albumsByArtist(req.body.id_artist).then(function(albums){
+                    res.send(albums)
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
+                        res.send("invalid id")
+                    } else {
+                        throw err;
+                    }
+                }));
+            } else {
+                missing_params = []
+                req.body.id_artist == undefined && missing_params.push("id_artist")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
+
+        albumsByCollection: function(req, res) {
+            if (req.body.id_collection != undefined) {
+                dbService.albumsByCollection(req.body.id_collection).then(function(albums){
+                    res.send(albums)
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
+                        res.send("invalid id")
+                    } else {
+                        throw err;
+                    }
+                }));
+            } else {
+                missing_params = []
+                req.body.id_collection == undefined && missing_params.push("id_collection")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
     }
+
+
     return controller;
 }
