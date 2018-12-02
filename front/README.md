@@ -1,6 +1,5 @@
 # pdiscos
 
-#front:
 ## Project setup
 ```
 npm install
@@ -25,9 +24,3 @@ npm run test
 ```
 npm run lint
 ```
-
-
-#Restful api:
-cd /back
-$ npm install
-$ nodemon index.js localhost 5000
