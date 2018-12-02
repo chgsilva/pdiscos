@@ -17,7 +17,7 @@ module.exports = {
     getAlbums: function(){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT D.*, A.name_artist as name_artist " +
+                "SELECT * " +
                 "FROM Album AS AB " +
                 "JOIN Artist AS A " +
                 "ON A.id_artist=AB.id_artist", function (err, rows, fields) {

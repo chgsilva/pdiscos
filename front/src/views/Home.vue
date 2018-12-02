@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    import list from './../components/list.vue'
+    import list from './../components/listCollections.vue'
     import tableCollections from './../components/tableCollections.vue'
 
     export default {

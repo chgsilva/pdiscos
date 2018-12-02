@@ -51,7 +51,7 @@ export default {
         axios.get(consts.BASE_URL + 'api/collections/', {})
         .then( response => (
             this.items = response.data,
-            console.log(this.items)
+            this.selectCollection(this.items[0])
         ))
         .catch(function (error) {
             console.log(error);
