@@ -16,5 +16,7 @@ module.exports = function(app) {
     app.put(PREFIX + '/collection', app.controllers.catalogoController.editCollection);
     app.delete(PREFIX + '/collection', app.controllers.catalogoController.deteleCollection);
 
+    app.post(PREFIX + '/associateAlbumCollection', app.controllers.catalogoController.associateAlbumCollection);
+    app.post(PREFIX + '/disassociateAlbumCollection', app.controllers.catalogoController.disassociateAlbumCollection);
 
 }

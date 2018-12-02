@@ -175,4 +175,30 @@ module.exports = {
             });
         });
     },
+
+    associateAlbumCollection: function(id_collection, id_album) {
+        return new Promise(function(resolve, reject) {
+            connection.query("INSERT INTO Album_Collection(id_collection, id_album) VALUES (" + id_collection + ", " + id_album + ")",
+            function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows.insertId);
+            });
+        });
+    },
+
+    disassociateAlbumCollection: function(id_collection, id_album) {
+        return new Promise(function(resolve, reject) {
+            connection.query(
+                "DELETE FROM Album_Collection "+
+                "WHERE id_collection=" + id_collection + " AND id_album=" + id_album
+                , function (err, rows, fields) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(rows.affectedRows);
+            });
+        });
+    },
 };

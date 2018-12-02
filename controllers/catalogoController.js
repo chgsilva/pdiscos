@@ -225,6 +225,60 @@ module.exports = function(app) {
                 )
             }
         },
+
+        associateAlbumCollection: function(req, res) {
+            if (req.body.id_collection != undefined && req.body.id_album != undefined) {
+                dbService.associateAlbumCollection(req.body.id_collection, req.body.id_album).then(function(){
+                    res.send("associated")
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
+                        res.send("invalid id")
+                    } else if(err.code == 'ER_DUP_ENTRY') {
+                        res.send("already associated")
+                    } else {
+                        throw err;
+                    }
+                }));
+            } else {
+                missing_params = []
+                req.body.id_collection == undefined && missing_params.push("id_collection")
+                req.body.id_album == undefined && missing_params.push("id_album")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
+
+        disassociateAlbumCollection: function(req, res) {
+            if (req.body.id_collection != undefined && req.body.id_album != undefined) {
+                dbService.disassociateAlbumCollection(req.body.id_collection, req.body.id_album).then(function(affectedRows){
+                    if (affectedRows == 1) {
+                        res.send("disassociated")
+                    } else {
+                        res.send("error")
+                    }
+                }).catch((err) => setImmediate(() => {
+                    if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
+                        res.send("invalid id")
+                    } else {
+                        throw err;
+                    }
+                }));
+            } else {
+                missing_params = []
+                req.body.id_collection == undefined && missing_params.push("id_collection")
+                req.body.id_album == undefined && missing_params.push("id_album")
+
+                res.send(
+                    {
+                        "missing_params":missing_params.toString()
+                    }
+                )
+            }
+        },
     }
     return controller;
 }
