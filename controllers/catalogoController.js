@@ -57,7 +57,7 @@ module.exports = function(app) {
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR') {
                         res.send("invalid id")
-                    } else{
+                    } else {
                         throw err;
                     }
                 }));
@@ -87,7 +87,7 @@ module.exports = function(app) {
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2') {
                         res.send("invalid artist_id")
-                    } else{
+                    } else {
                         throw err;
                     }
                 }));
@@ -116,7 +116,7 @@ module.exports = function(app) {
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR') {
                         res.send("invalid id")
-                    } else{
+                    } else {
                         throw err;
                     }
                 }));
@@ -190,7 +190,7 @@ module.exports = function(app) {
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
                         res.send("invalid id")
-                    } else{
+                    } else {
                         throw err;
                     }
                 }));
