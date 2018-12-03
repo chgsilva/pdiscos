@@ -28,10 +28,7 @@
                 <v-container grid-list-md>
                 <v-layout wrap>
                     <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.collection_name" label="Collection name"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.summary" label="Summary"></v-text-field>
+                        <v-text-field v-model="editedItem.new_artist_name" label="Artit Name"></v-text-field>
                     </v-flex>
 
                 </v-layout>
@@ -55,36 +52,27 @@ export default {
     data: function() {
         return {
             add_item: [
-                { icon: 'add', iconClass: 'grey lighten-1 white--text', title: 'Add Collection', subtitle: 'Create collections to create playlists', id_collection:-1 },
+                { icon: 'add', iconClass: 'grey lighten-1 white--text', title: 'Add Artist', subtitle: 'Create artists to add their albums', id_collection:-1 },
             ],
-            formTitle: "Add new Collection",
+            formTitle: "Add new Artist",
             dialog: false,
             editedIndex: -1,
             editedItem: {
-                collection_name: '',
-                summary: '',
+                new_artist_name: '',
             },
             defaultItem: {
-                collection_name: '',
-                summary: '',
+                new_artist_name: '',
             }
         }
     },
-
-    computed: {
-
-    },
-
     watch: {
         dialog (val) {
             val || this.close()
         }
     },
-
     methods: {
         openCreateCollectionDialog: function() {
             this.editedItem = Object.assign({}, this.defaultItem)
-
             this.dialog=true
         },
 
@@ -97,13 +85,12 @@ export default {
         },
 
         save () {
-            if (this.editedItem.collection_name != "" && this.editedItem.summary != "") {
-                axios.post(consts.BASE_URL + 'api/collection/', {
-                    new_collection_name: this.editedItem.collection_name,
-                    new_collection_descricao: this.editedItem.summary
+            if (this.editedItem.new_artist_name != "") {
+                axios.post(consts.BASE_URL + 'api/artist/', {
+                    new_artist_name: this.editedItem.new_artist_name,
                 })
                 .then(response => (
-                    this.$emit('requestListUpdate'),
+                    this.$emit('addedArtist'),
                     console.log(response)
                 ))
                 .catch(function (error) {

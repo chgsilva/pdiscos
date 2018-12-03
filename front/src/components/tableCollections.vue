@@ -93,8 +93,8 @@ export default {
         removeCollection: function() {
             confirm('Are you sure you want to delete this collection?') &&
             axios.delete(consts.BASE_URL + 'api/collection/' + this.item_selected)
-            .then( response => (
-                console.log(this.items)
+            .then(response => (
+                console.log(response)
             ))
             .catch(function (error) {
                 console.log(error);

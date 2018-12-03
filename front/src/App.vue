@@ -2,7 +2,7 @@
     <v-app>
         <v-toolbar app>
             <v-toolbar-title class="headline text-uppercase">
-                <span class="font-weight-light">ALBUM COLLECTIONS</span>
+                <span class="font-weight-light">CATALOFY</span>
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn
@@ -53,9 +53,9 @@ export default {
     components: {
 
     },
-    data () {
+    data: function () {
         return {
-        //
+            data: ""
         }
     }
 }

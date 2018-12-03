@@ -4,7 +4,7 @@
         style="float:left">
         <v-card color="purple">
             <v-list class="card_flex" two-line subheader color="purple">
-                <addCollection @requestListUpdate="updateList" ></addCollection>
+                <addArtist @addedArtist="updateList"></addArtist>
 
                 <v-divider inset></v-divider>
 
@@ -12,17 +12,16 @@
 
                 <v-list-tile
                     v-for="item in items"
-                    :key="item.id_collection"
+                    :key="item.id_artist"
                     avatar
-                    @click="selectCollection(item)"
+                    @click="selectArtist(item)"
                 >
                     <v-list-tile-avatar>
-                        <v-icon class="purple white--text" >list</v-icon>
+                        <v-icon class="purple white--text" >person</v-icon>
                     </v-list-tile-avatar>
 
                     <v-list-tile-content>
-                        <v-list-tile-title class="black--text" v-bind:class="{'purple--text':item_selected==item.id_collection}">{{ item.name_collection }}</v-list-tile-title>
-                        <v-list-tile-sub-title>{{ item.summary_collection }}</v-list-tile-sub-title>
+                        <v-list-tile-title class="black--text" v-bind:class="{'purple--text':item_selected==item.id_artist}">{{ item.name_artist }}</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
@@ -32,33 +31,33 @@
 
 <script>
 import axios from 'axios'
-import addCollection from './addCollection.vue'
+import addArtist from './addArtist.vue'
 import consts from './../consts.js'
 
 /* eslint-disable */
 export default {
     props: ['item_selected'],
     components: {
-        addCollection
+        addArtist
     },
     data() {
         return {
             items: {},
-            list_items_subheader: 'Collections'
+            list_items_subheader: 'Artists'
         }
     },
     created() {
         this.updateList()
     },
     methods: {
-        selectCollection: function(item) {
-            this.$emit('updateCollection', item.id_collection, item.name_collection)
+        selectArtist: function(item) {
+            this.$emit('updateArtist', item.id_artist, item.name_artist)
         },
-        updateList: function(){
-            axios.get(consts.BASE_URL + 'api/collections/', {})
+        updateList: function() {
+            axios.get(consts.BASE_URL + 'api/artists/', {})
             .then( response => (
                 this.items = response.data,
-                this.selectCollection(this.items[0])
+                this.selectArtist(this.items[0])
             ))
             .catch(function (error) {
                 console.log(error);

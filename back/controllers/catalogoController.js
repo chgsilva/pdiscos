@@ -31,8 +31,8 @@ module.exports = function(app) {
 
         deteleArtist: function(req, res) {
             //TODO remove all albums from this artist
-            if (req.body.id_artist != undefined) {
-                dbService.deleteArtist(req.body.id_artist).then(function(affectedRows){
+            if (req.params.id_artist != undefined) {
+                dbService.deleteArtist(req.params.id_artist).then(function(affectedRows){
                     if (affectedRows == 1) {
                         res.send("success")
                     } else {
@@ -83,12 +83,15 @@ module.exports = function(app) {
         },
 
         addAlbum: function(req, res) {
+            console.log(req.body)
             if (req.body.new_album_name != undefined && req.body.new_album_year != undefined && req.body.id_artist != undefined) {
-                dbService.addAlbum(req.body.new_album_name, req.body.new_album_year, req.body.id_artist).then(function(artistaId){
+                dbService.addAlbum(req.body.new_album_name, req.body.new_album_year, ''+req.body.id_artist).then(function(artistaId){
                     res.send({"id_album":artistaId})
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2') {
                         res.send("invalid artist_id")
+                    } else if(err.code == 'ER_BAD_FIELD_ERROR') {
+                        res.send("invalid format")
                     } else {
                         throw err;
                     }
@@ -98,7 +101,7 @@ module.exports = function(app) {
                 req.body.id_artist == undefined && missing_params.push("id_artist")
                 req.body.new_album_name == undefined && missing_params.push("new_album_name")
                 req.body.new_album_year == undefined && missing_params.push("new_album_year")
-
+                console.log('q')
                 res.send(
                     {
                         "missing_params":missing_params.toString()
@@ -138,8 +141,8 @@ module.exports = function(app) {
         },
 
         deteleAlbum: function(req, res) {
-            if (req.body.id_album != undefined) {
-                dbService.deleteAlbum(req.body.id_album).then(function(affectedRows){
+            if (req.params.id_album != undefined) {
+                dbService.deleteAlbum(req.params.id_album).then(function(affectedRows){
                     if (affectedRows == 1) {
                         res.send("success")
                     } else {
@@ -283,8 +286,8 @@ module.exports = function(app) {
         },
 
         albumsByArtist: function(req, res) {
-            if (req.body.id_artist != undefined) {
-                dbService.albumsByArtist(req.body.id_artist).then(function(albums){
+            if (req.params.id_artist != undefined) {
+                dbService.albumsByArtist(req.params.id_artist).then(function(albums){
                     res.send(albums)
                 }).catch((err) => setImmediate(() => {
                     if (err.code == 'ER_NO_REFERENCED_ROW_2' || err.code == 'ER_BAD_FIELD_ERROR' ) {
@@ -295,7 +298,7 @@ module.exports = function(app) {
                 }));
             } else {
                 missing_params = []
-                req.body.id_artist == undefined && missing_params.push("id_artist")
+                req.params.id_artist == undefined && missing_params.push("id_artist")
 
                 res.send(
                     {
