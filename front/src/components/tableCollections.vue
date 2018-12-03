@@ -53,14 +53,14 @@
                     <td class="text-xs-center">{{ props.item.name_artist }}</td>
                     <td class="text-xs-center">{{ props.item.album_year }}</td>
 
-                    <td v-if="edit_mode" class="justify-center layout px-0">
+                    <td v-if="edit_mode" class="justify-center layout px-0" v-bind:class="{'red_icon': getAddedIds.includes(props.item.id_album)}">
                         <v-icon
                             @click="disassociateAlbum(props.item)"
                         >
                             remove
                         </v-icon>
                     </td>
-                    <td v-if="edit_mode" class="justify-center layout px-0">
+                    <td v-if="edit_mode" class="justify-center layout px-0" v-bind:class="{'green_icon': !getAddedIds.includes(props.item.id_album)}">
                         <v-icon
                             @click="associateAlbum(props.item)"
                         >
@@ -80,6 +80,7 @@ import consts from './../consts.js'
 export default {
     data() {
         return {
+            items_added: [],
             items: [],
             headers: [
                 {
@@ -132,6 +133,7 @@ export default {
             this.$root.$emit('editCollectionInfo', {id:this.item_selected, collection_name:this.collection_name, collection_summary:this.collection_summary})
         },
         associateAlbum: function(album) {
+            this.items_added.push(album)
             axios.post(consts.BASE_URL + 'api/associateAlbumCollection/', {id_album:album.id_album, id_collection:this.item_selected, summary: ''})
                 .then( response => (
                     console.log(this.items)
@@ -141,6 +143,13 @@ export default {
                 })
         },
         disassociateAlbum: function(album) {
+            for (var item in this.items_added) {
+                if(album.id_album == this.items_added[item].id_album) {
+                    this.items_added.splice(item, 1);
+                    break
+                }
+            }
+
             axios.post(consts.BASE_URL + 'api/disassociateAlbumCollection/', {id_album:album.id_album, id_collection:this.item_selected})
                 .then( response => (
                     console.log(this.items)
@@ -151,12 +160,12 @@ export default {
         }
     },
     computed: {
-        current_playlist_name: function() {
-            try {
-
-            } catch(e) {
-                return ""
+        getAddedIds: function() {
+            var added = []
+            for (var item in this.items_added) {
+                added.push(this.items_added[item].id_album)
             }
+            return added
         }
     },
     watch: {
@@ -174,8 +183,9 @@ export default {
             if (this.edit_mode) {
                 axios.get(consts.BASE_URL + 'api/albums/')
                 .then( response => (
+                    this.items_added = this.items,
                     this.items = response.data,
-                    console.log(this.items)
+                    console.log('edit',this.items)
                 ))
                 .catch(function (error) {
                     console.log(error);
@@ -219,5 +229,11 @@ export default {
     flex: 0 1 auto;
     margin-left: auto;
     margin-right: 5%;
+}
+.green_icon {
+    background-color: green;
+}
+.red_icon {
+    background-color: red;
 }
 </style>
