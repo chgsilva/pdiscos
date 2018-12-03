@@ -5,7 +5,7 @@
             v-for="item in add_item"
             :key="item.id"
             avatar
-            @click="openCreateCollectionDialog"
+            @click="openCreateCollectionDialog(-1, '', '')"
         >
 
             <v-list-tile-avatar>
@@ -63,16 +63,15 @@ export default {
             editedItem: {
                 collection_name: '',
                 summary: '',
+                id:-1
             },
             defaultItem: {
                 collection_name: '',
                 summary: '',
-            }
+                id:-1
+            },
+
         }
-    },
-
-    computed: {
-
     },
 
     watch: {
@@ -81,9 +80,22 @@ export default {
         }
     },
 
+    created() {
+        this.$root.$on('editCollection', data => {
+            this.updateList()
+        })
+        this.$root.$on('editCollectionInfo', data => {
+            console.log('edit info', data)
+            this.openCreateCollectionDialog(data.id, data.collection_name, data.collection_summary)
+        })
+    },
+
     methods: {
-        openCreateCollectionDialog: function() {
-            this.editedItem = Object.assign({}, this.defaultItem)
+        openCreateCollectionDialog: function(id, collection_name, summary) {
+            this.editedItem.id = id
+            this.editedItem.collection_name = collection_name
+            this.editedItem.summary = summary
+            this.editedIndex = id
 
             this.dialog=true
         },
@@ -97,22 +109,42 @@ export default {
         },
 
         save () {
-            if (this.editedItem.collection_name != "" && this.editedItem.summary != "") {
-                axios.post(consts.BASE_URL + 'api/collection/', {
-                    new_collection_name: this.editedItem.collection_name,
-                    new_collection_descricao: this.editedItem.summary
-                })
-                .then(response => (
-                    this.$emit('requestListUpdate'),
-                    console.log(response)
-                ))
-                .catch(function (error) {
-                    console.log(error);
-                });
+            if(this.editedIndex == -1) {
+                if (this.editedItem.collection_name != "" && this.editedItem.summary != "") {
+                    axios.post(consts.BASE_URL + 'api/collection/', {
+                        new_collection_name: this.editedItem.collection_name,
+                        new_collection_descricao: this.editedItem.summary
+                    })
+                    .then(response => (
+                        this.$emit('requestListUpdate'),
+                        console.log(response)
+                    ))
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    alert("all items are required")
+                }
+                this.close()
             } else {
-                alert("all items are required")
+                if (this.editedItem.collection_name != "" && this.editedItem.summary != "") {
+                    axios.put(consts.BASE_URL + 'api/collection/', {
+                        new_collection_name: this.editedItem.collection_name,
+                        new_collection_descricao: this.editedItem.summary,
+                        id_collection: this.editedItem.id
+                    })
+                    .then(response => (
+                        this.$root.$emit('updateCollectionsListOnly')
+                    ))
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    alert("all items are required")
+                }
+                this.close()
+
             }
-            this.close()
         }
   }
 }

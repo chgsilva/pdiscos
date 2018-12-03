@@ -5,14 +5,9 @@
                 <p class="current_collection_name">{{collection_name}}</p>
                 <div class="items">
                     <v-icon v-if="!edit_mode"
-                        @click="editCollection"
+                        @click="editCollectionInfo"
                     >
                         edit
-                    </v-icon>
-                    <v-icon v-else
-                        @click="editCollection"
-                    >
-                        save
                     </v-icon>
                     <v-icon
                         @click="removeCollection"
@@ -21,10 +16,37 @@
                     </v-icon>
                 </div>
             </div>
+
+            <v-card-title>
+
+                <v-icon v-if="!edit_mode"
+                        @click="editCollection"
+                    >
+                        add
+                </v-icon>
+                <v-icon v-else
+                        @click="editCollection"
+                    >
+                        save
+                    </v-icon>
+                Albums in this collection:
+
+                <v-spacer></v-spacer>
+                <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+
+            </v-card-title>
+
             <v-data-table
                 :headers="headers"
                 :items="items"
                 hide-actions
+                :search="search"
             >
                 <template slot="items" slot-scope="props">
                     <td class="text-xs-center">{{ props.item.album_name }}</td>
@@ -76,7 +98,8 @@ export default {
                     value: 'album_year'
                 }
             ],
-            edit_mode: false
+            edit_mode: false,
+            search: ''
         }
     },
     created() {
@@ -88,12 +111,14 @@ export default {
         .catch(function (error) {
             console.log(error);
         })
+
     },
     methods: {
         removeCollection: function() {
             confirm('Are you sure you want to delete this collection?') &&
             axios.delete(consts.BASE_URL + 'api/collection/' + this.item_selected)
             .then(response => (
+                this.$root.$emit('updateCollections'),
                 console.log(response)
             ))
             .catch(function (error) {
@@ -103,8 +128,11 @@ export default {
         editCollection: function() {
             this.edit_mode = !this.edit_mode
         },
+        editCollectionInfo: function() {
+            this.$root.$emit('editCollectionInfo', {id:this.item_selected, collection_name:this.collection_name, collection_summary:this.collection_summary})
+        },
         associateAlbum: function(album) {
-            axios.post(consts.BASE_URL + 'api/associateAlbumCollection/', {id_album:album.id_album, id_collection:this.item_selected})
+            axios.post(consts.BASE_URL + 'api/associateAlbumCollection/', {id_album:album.id_album, id_collection:this.item_selected, summary: ''})
                 .then( response => (
                     console.log(this.items)
                 ))
@@ -121,13 +149,6 @@ export default {
                     console.log(error);
                 })
         }
-        // selectCollection: function(item) {
-        //     try {
-        //         this.$emit('updateCollection', item.id_collection, item.name_collection)
-        //     } catch (e){
-
-        //     }
-        // },
     },
     computed: {
         current_playlist_name: function() {
@@ -172,7 +193,7 @@ export default {
             }
         }
     },
-    props:['item_selected', 'collection_name']
+    props:['item_selected', 'collection_name', 'collection_summary']
 }
 </script>
 

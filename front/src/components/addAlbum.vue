@@ -4,9 +4,6 @@
             <v-icon @click="openAlbumDialog('','',-1)">
                 add
             </v-icon>
-            <v-icon @click="removeArtist">
-                delete
-            </v-icon>
         </div>
         <v-dialog v-model="dialog" max-width="500px">
 
@@ -86,9 +83,14 @@ export default {
             }, 300)
         },
 
+        isInteger: function(value) {
+            return /^\d+$/.test(value);
+        },
+
         save () {
             if(this.editedIndex == -1){
-                if (this.editedItem.new_album_name != "" && this.editedItem.new_album_year != "" && this.item_selected) {
+                console.log(this.editedItem.new_album_year, this.isInteger(this.editedItem.new_album_year))
+                if (this.editedItem.new_album_name != "" && this.editedItem.new_album_year != "" && this.item_selected && this.isInteger(this.editedItem.new_album_year)) {
                     axios.post(consts.BASE_URL + 'api/album/',{
                         new_album_name: this.editedItem.new_album_name,
                         new_album_year: this.editedItem.new_album_year,
@@ -101,10 +103,10 @@ export default {
                         console.log(error);
                     });
                 } else {
-                    alert("all items are required and new_album_year must be a number")
+                    alert("All items are required and the year must be a number.")
                 }
             } else {
-                if (this.editedItem.new_album_name != "" && this.editedItem.new_album_year != "" && this.item_selected && Number.isInteger(this.editedItem.new_album_year)) {
+                if (this.editedItem.new_album_name != "" && this.editedItem.new_album_year != "" && this.item_selected && this.isInteger(this.editedItem.new_album_year)) {
                     axios.put(consts.BASE_URL + 'api/album/', {
                         new_album_name: this.editedItem.new_album_name,
                         new_album_year: this.editedItem.new_album_year,
@@ -118,21 +120,10 @@ export default {
                         console.log(error);
                     });
                 } else {
-                    alert("all items are required and new_album_year must be a number")
+                    alert("All items are required and the year must be a number.")
                 }
             }
             this.close()
-        },
-        removeArtist: function(artist) {
-            console.log(this.item_selected)
-            confirm('Are you sure you want to delete this Artist?') &&
-            axios.delete(consts.BASE_URL + 'api/artist/' + this.item_selected)
-            .then(response=>(
-                console.log(response)
-            ))
-            .catch(function (error) {
-                console.log(error);
-            })
         },
         editArtist: function(){
 

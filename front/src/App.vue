@@ -17,12 +17,6 @@
             >
                 <span class="mr-2">ALBUMS</span>
             </v-btn>
-            <v-btn
-                flat
-                :to="{path:'/about'}"
-            >
-                <span class="mr-2">ABOUT</span>
-            </v-btn>
         </v-toolbar>
 
         <v-container class="container" fluid>

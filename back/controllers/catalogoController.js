@@ -83,7 +83,6 @@ module.exports = function(app) {
         },
 
         addAlbum: function(req, res) {
-            console.log(req.body)
             if (req.body.new_album_name != undefined && req.body.new_album_year != undefined && req.body.id_artist != undefined) {
                 dbService.addAlbum(req.body.new_album_name, req.body.new_album_year, ''+req.body.id_artist).then(function(artistaId){
                     res.send({"id_album":artistaId})

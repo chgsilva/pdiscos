@@ -48,6 +48,10 @@ export default {
     },
     created() {
         this.updateList()
+
+        this.$root.$on('updateArtists', data => {
+            this.updateList()
+        })
     },
     methods: {
         selectArtist: function(item) {

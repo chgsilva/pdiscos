@@ -4,16 +4,35 @@
             <div class="header_table">
                 <p class="current_artist_name">{{artist_name}}</p>
                 <div class="items">
-                    <addAlbum
-                        v-bind:item_selected="item_selected"
-                        ref="addAlbumComponent"
-                        @requestAlbumsUpdate="updateAlbumList"
-                    ></addAlbum>
+                    <v-icon @click="removeArtist">
+                        delete
+                    </v-icon>
                 </div>
             </div>
+            <v-card-title>
+                <addAlbum
+                    v-bind:item_selected="item_selected"
+                    ref="addAlbumComponent"
+                    @requestAlbumsUpdate="updateAlbumList"
+                ></addAlbum>
+
+                Albums from this artist:
+
+                <v-spacer></v-spacer>
+                <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+
+            </v-card-title>
+
             <v-data-table
                 :headers="headers"
                 :items="items"
+                :search="search"
                 hide-actions
             >
                 <template slot="items" slot-scope="props">
@@ -58,7 +77,8 @@ export default {
                     align: 'center',
                     value: 'album_year'
                 }
-            ]
+            ],
+            search: ''
         }
     },
     components: {
@@ -90,7 +110,19 @@ export default {
         },
         editAlbum: function(album) {
             this.$refs.addAlbumComponent.openAlbumDialog(album.album_name, album.album_year, album.id_album)
-        }
+        },
+        removeArtist: function(artist) {
+            console.log(this.item_selected)
+            confirm('Are you sure you want to delete this Artist?') &&
+            axios.delete(consts.BASE_URL + 'api/artist/' + this.item_selected)
+            .then(response=>(
+                this.$root.$emit('updateArtists')
+            ))
+            .catch(function (error) {
+                console.log(error);
+            })
+        },
+
     },
     computed: {
         current_playlist_name: function() {

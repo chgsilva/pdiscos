@@ -4,7 +4,7 @@
         style="float:left">
         <v-card color="purple">
             <v-list class="card_flex" two-line subheader color="purple">
-                <addCollection @requestListUpdate="updateList" ></addCollection>
+                <addCollection @requestListUpdate="updateList" @updateCollectionsListOnly="updateCollectionsListOnly" ></addCollection>
 
                 <v-divider inset></v-divider>
 
@@ -49,10 +49,25 @@ export default {
     },
     created() {
         this.updateList()
+        this.$root.$on('updateCollections', data => {
+            this.updateList()
+        })
+        this.$root.$on('updateCollectionsListOnly', data => {
+            this.updateCollectionsListOnly()
+        })
+
     },
     methods: {
         selectCollection: function(item) {
-            this.$emit('updateCollection', item.id_collection, item.name_collection)
+            this.$emit('updateCollection', item.id_collection, item.name_collection, item.summary_collection)
+        },
+        updateCurrentCollectionName: function() {
+            for (var item in this.items){
+                if(this.items[item].id_collection == this.item_selected){
+                    this.$emit('updateCollection', this.items[item].id_collection, this.items[item].name_collection, this.items[item].summary_collection)
+                    break
+                }
+            }
         },
         updateList: function(){
             axios.get(consts.BASE_URL + 'api/collections/', {})
@@ -63,7 +78,19 @@ export default {
             .catch(function (error) {
                 console.log(error);
             })
+        },
+
+        updateCollectionsListOnly: function(){
+            axios.get(consts.BASE_URL + 'api/collections/', {})
+            .then( response => (
+                this.items = response.data,
+                this.updateCurrentCollectionName()
+            ))
+            .catch(function (error) {
+                console.log(error);
+            })
         }
     },
+
 }
 </script>

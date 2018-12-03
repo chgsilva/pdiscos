@@ -4,7 +4,8 @@
             <list v-bind:item_selected="collection_selected" @updateCollection="selectCollection"> </list>
             <tableCollections
                 v-bind:item_selected="collection_selected"
-                v-bind:collection_name="collection_selected_name"> </tableCollections>
+                v-bind:collection_name="collection_selected_name"
+                v-bind:collection_summary="collection_selected_summary"> </tableCollections>
         </v-layout>
     </div>
 </template>
@@ -21,13 +22,15 @@
         data: function() {
             return {
                 collection_selected: 0,
-                collection_selected_name: ""
+                collection_selected_name: "",
+                collection_selected_summary: ""
             }
         },
         methods: {
-            selectCollection: function(id_selected, name_selected) {
+            selectCollection: function(id_selected, name_selected, summary_select) {
                 this.collection_selected = id_selected
-                this.collection_selected_name = name_selected
+                this.collection_selected_name = name_selected,
+                this.collection_selected_summary = summary_select
             },
         }
     }

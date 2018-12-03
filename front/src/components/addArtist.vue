@@ -5,7 +5,7 @@
             v-for="item in add_item"
             :key="item.id"
             avatar
-            @click="openCreateCollectionDialog"
+            @click="openCreateArtistDialog"
         >
 
             <v-list-tile-avatar>
@@ -59,9 +59,11 @@ export default {
             editedIndex: -1,
             editedItem: {
                 new_artist_name: '',
+                id:-1
             },
             defaultItem: {
                 new_artist_name: '',
+                id:-1
             }
         }
     },
@@ -71,7 +73,7 @@ export default {
         }
     },
     methods: {
-        openCreateCollectionDialog: function() {
+        openCreateArtistDialog: function() {
             this.editedItem = Object.assign({}, this.defaultItem)
             this.dialog=true
         },
